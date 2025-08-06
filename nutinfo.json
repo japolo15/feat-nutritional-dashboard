@@ -1,0 +1,24 @@
+{
+  "readings": {
+    "-NYuWp-w_sR4z-X_c4xL": {
+      "timestamp": "2025-08-05T08:00:00Z",
+      "food_type": "almendras",
+      "grams_dispensed": 25
+    },
+    "-NYuWq-v_qW2z-Y_d5yM": {
+      "timestamp": "2025-08-05T12:30:00Z",
+      "food_type": "nueces",
+      "grams_dispensed": 20
+    },
+    "-NYuWr-x_rX3z-Z_e6zN": {
+      "timestamp": "2025-08-05T18:00:00Z",
+      "food_type": "anacardos",
+      "grams_dispensed": 35
+    },
+    "-NYuWs-y_sY4z-A_f7oP": {
+      "timestamp": "2025-08-06T09:15:00Z",
+      "food_type": "almendras",
+      "grams_dispensed": 30
+    }
+  }
+}

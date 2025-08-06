@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feat - Tu Monitor de Nutrición</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Feat</h1>
+        <p>Monitorea tus calorías para un mejor estilo de vida.</p>
+    </header>
+    <main>
+        <section id="daily-overview">
+            <div class="motivational-message">
+                <p id="greeting-message"></p>
+                <p id="motivation-text"></p>
+            </div>
+            <div class="progress-container">
+                <h2 class="section-title">Calorías Consumidas Hoy</h2>
+                <div class="progress-circle-container">
+                    <div class="progress-circle">
+                        <div class="progress-circle-inner">
+                            <span id="calories-consumed">0</span> / <span id="calories-goal">2000</span> kcal
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="weekly-history">
+            <h2 class="section-title">Historial Calórico Semanal</h2>
+            <div class="bar-chart-container">
+                <canvas id="calories-chart"></canvas>
+            </div>
+        </section>
+
+        <section id="latest-readings">
+            <h2 class="section-title">Últimas Lecturas</h2>
+            <ul id="readings-list">
+                </ul>
+            <p class="no-readings">No hay lecturas recientes.</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Feat - Monitoreo de Nutrición</p>
+        <p>Desarrollado por <a href=""></a>
+            <span class="developer-name">Ángel Zambrano, Jorge Apolo, David Mites y Sebastián Benítez</span>
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/script.js" type="module"></script>
+</body>
+</html>

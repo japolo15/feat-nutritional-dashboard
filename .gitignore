@@ -1,0 +1,19 @@
+# Ignore log files
+*.log
+
+# Ignore build artifacts
+build/
+dist/
+
+# Ignore sensitive configuration
+config.ini
+
+# Ignore IDE files
+.idea/
+.vscode/
+
+# Ignore specific file within a directory
+!data/important.csv
+
+#Ignore macOS system files
+*.DS_Store
