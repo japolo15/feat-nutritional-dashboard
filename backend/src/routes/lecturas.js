@@ -1,23 +1,15 @@
-
-const {Router}=require('express');
-const router = Router();
-
-const {postLectura, getAllLecturas, getByIdLectura, updateLectura, deleteLectura} = require('../controllers/lecturasController');
-
-//POST /lecturas → crear nueva lectura
-router.post('/readings', postLectura);
+const express = require('express');
+const router = express.Router();
+const lecturasController = require('../controllers/lecturasController');
 
 //GET ALL /lecturas → obtener todas las lecturas
-router.get('/', getAllLecturas);
+router.get('/lecturas', lecturasController.getLecturas);
 
-//GET BY ID /lecturas/:id → obtener una lectura específica
-router.get('/sensor/:id', getByIdLectura);
+//GET COUNT /lecturas/count → obtener el conteo de las lecturas
+router.get('/lecturas/count', lecturasController.getCount);
 
-//UPDATE /lecturas/:id → actualizar una lectura
-router.put('/:id', updateLectura);
-
-//DELETE /lecturas/:id → eliminar una lectura
-router.delete('/:id', deleteLectura);
+//POST /lecturas → crear nueva lectura
+router.post('/lecturas', lecturasController.postLectura);
 
 module.exports = router;
 

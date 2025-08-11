@@ -1,4 +1,4 @@
-const db = require('./firebase.js')
+const db = require('./firebase');
 const ref = db.ref('readings');
 const lecturasController = {};
 
@@ -29,8 +29,34 @@ lecturasController.postLectura = async (req, res) => {
 // Obtener todas las lecturas
 lecturasController.getAllLecturas = async (req, res) => {
   try {
-    const snapshot = await ref.once('value');
-    res.status(200).json(snapshot.val() || {});
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    
+    const snapshot = await ref.orderByChild('timestamp')
+                            .once('value');
+    
+    const data = snapshot.val() || {};
+    const allReadings = Object.entries(data)
+      .map(([key, value]) => ({...value, id: key}))
+      .sort((a, b) => b.timestamp - a.timestamp);
+
+    const totalReadings = allReadings.length;
+    const totalPages = Math.ceil(totalReadings / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    
+    const paginatedReadings = allReadings.slice(startIndex, endIndex);
+
+    res.status(200).json({
+      readings: paginatedReadings,
+      pagination: {
+        currentPage: page,
+        totalPages: totalPages,
+        totalReadings: totalReadings,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener lecturas' });
   }
@@ -81,6 +107,44 @@ lecturasController.deleteLectura = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Error al eliminar lectura' });
   }
+};
+
+exports.getLecturas = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        
+        const snapshot = await db.ref('readings')
+            .orderByChild('timestamp')
+            .limitToLast(page * limit)
+            .once('value');
+        
+        const data = snapshot.val() || {};
+        const readings = Object.entries(data)
+            .map(([key, value]) => ({...value, id: key}))
+            .reverse()
+            .slice((page - 1) * limit, page * limit);
+
+        res.json({
+            readings,
+            currentPage: page,
+            hasMore: Object.keys(data).length > page * limit
+        });
+    } catch (error) {
+        console.error('Error fetching readings:', error);
+        res.status(500).json({ error: 'Error fetching readings' });
+    }
+};
+
+exports.getCount = async (req, res) => {
+    try {
+        const snapshot = await db.ref('readings').once('value');
+        const count = snapshot.numChildren();
+        res.json({ count });
+    } catch (error) {
+        console.error('Error getting count:', error);
+        res.status(500).json({ error: 'Error getting count' });
+    }
 };
 
 module.exports = lecturasController;

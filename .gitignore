@@ -17,3 +17,11 @@ config.ini
 
 #Ignore macOS system files
 *.DS_Store
+
+# Ignore node modules
+node_modules/
+
+# environment files
+.env
+.env.local
+.env.*.local

@@ -137,10 +137,18 @@ main {
 }
 
 #latest-readings {
+    max-height: 500px;
+    overflow-y: auto;
     padding: 20px;
     background-color: #f8f9fa;
     border-radius: 6px;
     border: 1px solid #eee;
+}
+
+#readings-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
 }
 
 #latest-readings ul {
@@ -186,6 +194,39 @@ footer {
     width: 100%;
     background-color: #e9ecef;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.page-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.page-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.page-btn:hover:not(:disabled) {
+    background-color: #218838;
+}
+
+#pageInfo {
+    color: #495057;
+    font-weight: 500;
 }
 
 /* Media query para pantallas más pequeñas */

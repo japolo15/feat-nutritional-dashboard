@@ -127,35 +127,86 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    const readingsRef = ref(database, 'readings');
+    // Add these variables at the top
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 5;
 
-    onValue(readingsRef, (snapshot) => {
-        const readingsData = snapshot.val();
-        let todayCalories = 0;
-
-        if (readingsData) {
-            const today = new Date().toLocaleDateString();
-            for (const key in readingsData) {
-                const reading = readingsData[key];
-                const readingDate = new Date(reading.timestamp).toLocaleDateString();
-
-                if (readingDate === today) {
-                    const caloriesPerGram = calorieValues[reading.food_type] || 0;
-                    todayCalories += (reading.grams_dispensed * caloriesPerGram);
-                }
-            }
-        }
-
-        caloriesConsumedElement.textContent = Math.round(todayCalories);
-
-        const percentage = Math.min((todayCalories / MAX_CALORIES_GOAL) * 100, 100);
-        progressCircle.style.background = `conic-gradient(#28a745 ${percentage}%, #d4edda ${percentage}%)`;
+    // Replace the existing readings fetch code
+    async function fetchReadings(page = 1) {
+        const readingsRef = ref(database, 'readings');
         
-        // Llama a la nueva función para procesar los datos semanales
-        processWeeklyReadings(readingsData);
+        onValue(readingsRef, (snapshot) => {
+            const readingsData = snapshot.val();
+            if (readingsData) {
+                displayReadings(readingsData, page);
+            } else {
+                const readingsList = document.getElementById('readings-list');
+                const noReadingsMessage = document.querySelector('.no-readings');
+                readingsList.style.display = 'none';
+                noReadingsMessage.style.display = 'block';
+            }
+        });
+    }
+
+    function displayReadings(readingsData, page) {
+        const readingsList = document.getElementById('readings-list');
+        const noReadingsMessage = document.querySelector('.no-readings');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
+
+        // Convert to array and sort by timestamp
+        const readingsArray = Object.entries(readingsData)
+            .map(([key, reading]) => ({...reading, key}))
+            .sort((a, b) => b.timestamp - a.timestamp);
+
+        const totalReadings = readingsArray.length;
+        const totalPages = Math.ceil(totalReadings / ITEMS_PER_PAGE);
+        const startIndex = (page - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        const pageReadings = readingsArray.slice(startIndex, endIndex);
+
+        // Update pagination controls
+        prevPageBtn.disabled = page === 1;
+        nextPageBtn.disabled = page === totalPages;
+        pageInfo.textContent = `Página ${page} de ${totalPages}`;
+
+        // Display readings
+        readingsList.innerHTML = '';
+        pageReadings.forEach(reading => {
+            const li = document.createElement('li');
+            const date = new Date(reading.timestamp);
+            const calories = calorieValues[reading.food_type] * reading.grams_dispensed;
+            
+            li.innerHTML = `
+                <div class="reading-time">${date.toLocaleString()}</div>
+                <div class="reading-details">
+                    <span class="food-type">${reading.food_type}</span>
+                    <span class="grams">${reading.grams_dispensed}g</span>
+                    <span class="calories">${Math.round(calories)} kcal</span>
+                </div>
+            `;
+            readingsList.appendChild(li);
+        });
+
+        readingsList.style.display = pageReadings.length ? 'block' : 'none';
+        noReadingsMessage.style.display = pageReadings.length ? 'none' : 'block';
+    }
+
+    // Add event listeners for pagination
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            fetchReadings(currentPage);
+        }
     });
 
-    const lastReadingsQuery = query(readingsRef, limitToLast(5));
+    document.getElementById('nextPage').addEventListener('click', () => {
+        currentPage++;
+        fetchReadings(currentPage);
+    });
+
+    const lastReadingsQuery = query(ref(database, 'readings'), limitToLast(5));
     onValue(lastReadingsQuery, (snapshot) => {
         const readingsData = snapshot.val();
         readingsList.innerHTML = '';
