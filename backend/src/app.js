@@ -4,12 +4,19 @@ const path = require('path');
 const server = express();
 
 //Configuraciones
-server.set('port',8081);
-server.set('host','localhost'); // Corrige el error de localhost
+server.set('port', 8081);
+server.set('host', '0.0.0.0'); // Change this line to listen on all interfaces
 
 //Middlewares
 server.use(cors());
 server.use(express.json());
+
+// Add timeout middleware
+server.use((req, res, next) => {
+    req.setTimeout(5000);
+    res.setTimeout(5000);
+    next();
+});
 
 // Servir archivos estáticos desde el frontend
 server.use(express.static(path.join(__dirname, '../../frontend/static')));
@@ -20,6 +27,7 @@ server.get('/', function (req, res) {
    res.sendFile(path.join(__dirname, '../../frontend/templates/index.html'));
 });
 
+// Mount routes at root level to handle both /lecturas and /readings
 server.use('/', require('./routes/lecturas'));
 
 //Mandar mensaje de error 404

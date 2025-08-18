@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Calorías Consumidas',
                     data: weeklyData.map(item => item.calories),
-                    backgroundColor: '#28a745',
+                    backgroundColor: '#528032',
                     borderColor: '#218838',
                     borderWidth: 1
                 }]
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update progress circle
         const progress = (roundedCalories / MAX_CALORIES_GOAL) * 100;
         progressCircle.style.background = `conic-gradient(
-            #28a745 ${progress * 3.6}deg,
+            #3a5a40 ${progress * 3.6}deg,
             #e9ecef ${progress * 3.6}deg
         )`;
     }
@@ -260,38 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPage++;
         fetchReadings(currentPage);
     });
-
-    // ELIMINAR todo este bloque ya que duplica funcionalidad
-    /*
-    const lastReadingsQuery = query(ref(database, 'readings'), limitToLast(5));
-    onValue(lastReadingsQuery, (snapshot) => {
-        const readingsData = snapshot.val();
-        readingsList.innerHTML = '';
-
-        if (readingsData) {
-            const readingsArray = Object.values(readingsData).reverse();
-            noReadingsMessage.style.display = 'none';
-
-            readingsArray.forEach(reading => {
-                const li = document.createElement('li');
-                const timestamp = new Date(reading.timestamp);
-                const formattedDate = `${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}`;
-                const caloriesPerGram = calorieValues[reading.food_type] || 0;
-                const calculatedCalories = reading.grams_dispensed * caloriesPerGram;
-
-                li.innerHTML = `
-                    <span><strong>Fecha/Hora:</strong> ${formattedDate}</span>
-                    <span><strong>Comida:</strong> ${reading.food_type}</span>
-                    <span><strong>Gramos:</strong> ${reading.grams_dispensed} g</span>
-                    <span><strong>Calorías:</strong> ${Math.round(calculatedCalories)} kcal</span>
-                `;
-                readingsList.appendChild(li);
-            });
-        } else {
-            noReadingsMessage.style.display = 'block';
-        }
-    });
-    */
 
     updateGreeting();
     updateMotivationalMessage();

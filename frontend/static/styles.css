@@ -2,7 +2,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #fffeee;
+    background-color: #fbfaf2; /* Cambio a beige claro */
     color: #495057;
     display: flex;
     flex-direction: column;
@@ -11,7 +11,7 @@ body {
 }
 
 header {
-    background-color: #28a745;
+    background-color: #528032; /* Verde más oscuro similar a la diapositiva */
     color: white;
     padding: 20px;
     text-align: center;
@@ -38,7 +38,7 @@ main {
 }
 
 .section-title {
-    color: #28a745;
+    color: #3a5a40; /* Verde oscuro para títulos */
     margin-top: 0;
     margin-bottom: 20px;
     text-align: center;
@@ -51,7 +51,7 @@ main {
     align-items: center;
     margin-bottom: 30px;
     padding: 20px;
-    background-color: #f1f8e9;
+    background-color: #e9edc9; /* Beige verdoso claro */
     border-radius: 6px;
 }
 
@@ -63,7 +63,7 @@ main {
 
 #greeting-message {
     font-size: 1.5em;
-    color: #38761d;
+    color: #344e41; /* Verde más oscuro */
     margin-bottom: 10px;
 }
 
@@ -90,7 +90,7 @@ main {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: conic-gradient(#28a745 0%, #d4edda 0%);
+    background: conic-gradient(#588157 0%, #dad7cd 0%); /* Nuevos colores para el círculo de progreso */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -111,7 +111,7 @@ main {
 #calories-consumed {
     font-size: 2em;
     font-weight: bold;
-    color: #28a745;
+    color: #3a5a40; /* Verde oscuro */
 }
 
 #calories-goal {
@@ -140,7 +140,7 @@ main {
     max-height: 500px;
     overflow-y: auto;
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: #fefae0; /* Beige más claro */
     border-radius: 6px;
     border: 1px solid #eee;
 }
@@ -170,7 +170,7 @@ main {
 }
 
 #latest-readings li span strong {
-    color: #28a745;
+    color: #588157; /* Verde más oscuro */
     margin-right: 5px;
 }
 
@@ -215,7 +215,7 @@ footer {
 }
 
 .page-btn {
-    background-color: #28a745;
+    background-color: #588157; /* Verde más oscuro */
     color: white;
     border: none;
     padding: 8px 16px;
@@ -230,7 +230,7 @@ footer {
 }
 
 .page-btn:hover:not(:disabled) {
-    background-color: #218838;
+    background-color: #3a5a40; /* Verde aún más oscuro al hover */
 }
 
 #pageInfo {

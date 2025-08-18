@@ -2,14 +2,15 @@ const express = require('express');
 const router = express.Router();
 const lecturasController = require('../controllers/lecturasController');
 
-//GET ALL /lecturas → obtener todas las lecturas
-router.get('/lecturas', lecturasController.getLecturas);
+// Handle both Spanish and English routes for compatibility
+router.get('/', lecturasController.getLecturas);
+router.get('/count', lecturasController.getCount);
+router.post('/', lecturasController.postLectura);
 
-//GET COUNT /lecturas/count → obtener el conteo de las lecturas
-router.get('/lecturas/count', lecturasController.getCount);
-
-//POST /lecturas → crear nueva lectura
-router.post('/lecturas', lecturasController.postLectura);
+// Add English routes for ESP32
+router.post('/readings', lecturasController.postLectura);
+router.get('/readings', lecturasController.getLecturas);
+router.get('/readings/count', lecturasController.getCount);
 
 module.exports = router;
 
