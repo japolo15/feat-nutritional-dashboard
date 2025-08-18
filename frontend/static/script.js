@@ -129,6 +129,36 @@ document.addEventListener('DOMContentLoaded', () => {
         createBarChart(chartData);
     }
 
+    // Add this function after the calorieValues declaration
+    function updateDailyCalories(readingsData) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        let dailyCalories = 0;
+
+        if (readingsData) {
+            Object.values(readingsData).forEach(reading => {
+                const readingDate = new Date(reading.timestamp);
+                readingDate.setHours(0, 0, 0, 0);
+                
+                if (readingDate.getTime() === today.getTime()) {
+                    const calories = reading.grams_dispensed * calorieValues[reading.food_type];
+                    dailyCalories += calories;
+                }
+            });
+        }
+
+        // Update the calories display and progress circle
+        const roundedCalories = Math.round(dailyCalories);
+        caloriesConsumedElement.textContent = roundedCalories;
+        
+        // Update progress circle
+        const progress = (roundedCalories / MAX_CALORIES_GOAL) * 100;
+        progressCircle.style.background = `conic-gradient(
+            #28a745 ${progress * 3.6}deg,
+            #e9ecef ${progress * 3.6}deg
+        )`;
+    }
 
     // Add these variables at the top
     let currentPage = 1;
@@ -142,12 +172,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const readingsData = snapshot.val();
             if (readingsData) {
                 displayReadings(readingsData, page);
-                processWeeklyReadings(readingsData); // Add this line
+                processWeeklyReadings(readingsData);
+                updateDailyCalories(readingsData); // Add this line
             } else {
                 const readingsList = document.getElementById('readings-list');
                 const noReadingsMessage = document.querySelector('.no-readings');
                 readingsList.style.display = 'none';
                 noReadingsMessage.style.display = 'block';
+                caloriesConsumedElement.textContent = '0';
+                progressCircle.style.background = 'conic-gradient(#e9ecef 360deg, #e9ecef 360deg)';
             }
         });
     }
@@ -188,7 +221,10 @@ document.addEventListener('DOMContentLoaded', () => {
         readingsList.innerHTML = '';
         pageReadings.forEach(reading => {
             const li = document.createElement('li');
-            const formattedDate = reading.timestampDate.toLocaleString('es-ES', {
+            // Create date from UTC timestamp and convert to local string
+            const timestamp = new Date(reading.timestamp);
+            const utcDate = new Date(timestamp.getTime() + timestamp.getTimezoneOffset() * 60000);
+            const formattedDate = utcDate.toLocaleString('es-EC', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
