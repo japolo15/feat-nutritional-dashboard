@@ -99,30 +99,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- NUEVA LÓGICA PARA PROCESAR LOS DATOS DE LA SEMANA ---
     function processWeeklyReadings(readingsData) {
-        const weeklyCalories = new Array(7).fill(0); // [0, 0, 0, 0, 0, 0, 0] para cada día
-
+        const weeklyCalories = new Array(7).fill(0);
+        
         if (readingsData) {
             const now = new Date();
-            const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay()); // Obtiene el inicio de la semana (domingo)
+            // Start of week (Sunday)
+            const startOfWeek = new Date(now);
+            startOfWeek.setHours(0, 0, 0, 0);
+            startOfWeek.setDate(now.getDate() - now.getDay());
 
-            for (const key in readingsData) {
-                const reading = readingsData[key];
-                const timestamp = new Date(reading.timestamp);
-
-                if (timestamp >= startOfWeek) { // Filtra las lecturas de la semana actual
-                    const dayOfWeek = timestamp.getDay(); // 0 = Domingo, 1 = Lunes, etc.
-                    const caloriesPerGram = calorieValues[reading.food_type] || 0;
-                    weeklyCalories[dayOfWeek] += (reading.grams_dispensed * caloriesPerGram);
+            Object.values(readingsData).forEach(reading => {
+                const readingDate = new Date(reading.timestamp);
+                
+                // Check if reading is from current week
+                if (readingDate >= startOfWeek) {
+                    const dayIndex = readingDate.getDay();
+                    const calories = reading.grams_dispensed * calorieValues[reading.food_type];
+                    weeklyCalories[dayIndex] += calories;
                 }
-            }
+            });
         }
-        
-        // Formatea los datos para Chart.js
-        const chartData = dayNames.map((day, index) => ({
-            day: day,
-            calories: Math.round(weeklyCalories[index])
+
+        // Create chart data
+        const chartData = weeklyCalories.map((calories, index) => ({
+            day: dayNames[index],
+            calories: Math.round(calories)
         }));
-        
+
         createBarChart(chartData);
     }
 
@@ -139,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const readingsData = snapshot.val();
             if (readingsData) {
                 displayReadings(readingsData, page);
+                processWeeklyReadings(readingsData); // Add this line
             } else {
                 const readingsList = document.getElementById('readings-list');
                 const noReadingsMessage = document.querySelector('.no-readings');
@@ -155,36 +159,51 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextPageBtn = document.getElementById('nextPage');
         const pageInfo = document.getElementById('pageInfo');
 
-        // Convert to array and sort by timestamp
+        // Convertir a array y ordenar por timestamp ISO
         const readingsArray = Object.entries(readingsData)
-            .map(([key, reading]) => ({...reading, key}))
-            .sort((a, b) => b.timestamp - a.timestamp);
+            .map(([key, reading]) => ({
+                ...reading,
+                key,
+                // Convertir timestamp a objeto Date
+                timestampDate: new Date(reading.timestamp)
+            }))
+            .sort((a, b) => {
+                // Ordenar de más reciente a más antiguo
+                return b.timestampDate - a.timestampDate;
+            });
 
         const totalReadings = readingsArray.length;
         const totalPages = Math.ceil(totalReadings / ITEMS_PER_PAGE);
         const startIndex = (page - 1) * ITEMS_PER_PAGE;
         const endIndex = startIndex + ITEMS_PER_PAGE;
+        
         const pageReadings = readingsArray.slice(startIndex, endIndex);
 
-        // Update pagination controls
+        // Actualizar controles de paginación
         prevPageBtn.disabled = page === 1;
         nextPageBtn.disabled = page === totalPages;
         pageInfo.textContent = `Página ${page} de ${totalPages}`;
 
-        // Display readings
+        // Mostrar lecturas
         readingsList.innerHTML = '';
         pageReadings.forEach(reading => {
             const li = document.createElement('li');
-            const date = new Date(reading.timestamp);
-            const calories = calorieValues[reading.food_type] * reading.grams_dispensed;
+            const formattedDate = reading.timestampDate.toLocaleString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            const calculatedCalories = calorieValues[reading.food_type] * reading.grams_dispensed;
             
             li.innerHTML = `
-                <div class="reading-time">${date.toLocaleString()}</div>
-                <div class="reading-details">
-                    <span class="food-type">${reading.food_type}</span>
-                    <span class="grams">${reading.grams_dispensed}g</span>
-                    <span class="calories">${Math.round(calories)} kcal</span>
-                </div>
+                <span><strong>Fecha/Hora:</strong> ${formattedDate}</span>
+                <span><strong>Comida:</strong> ${reading.food_type}</span>
+                <span><strong>Gramos:</strong> ${reading.grams_dispensed} g</span>
+                <span><strong>Calorías:</strong> ${Math.round(calculatedCalories)} kcal</span>
             `;
             readingsList.appendChild(li);
         });
@@ -206,6 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchReadings(currentPage);
     });
 
+    // ELIMINAR todo este bloque ya que duplica funcionalidad
+    /*
     const lastReadingsQuery = query(ref(database, 'readings'), limitToLast(5));
     onValue(lastReadingsQuery, (snapshot) => {
         const readingsData = snapshot.val();
@@ -234,9 +255,13 @@ document.addEventListener('DOMContentLoaded', () => {
             noReadingsMessage.style.display = 'block';
         }
     });
+    */
 
     updateGreeting();
     updateMotivationalMessage();
     setInterval(updateGreeting, 60000);
     setInterval(updateMotivationalMessage, 180000);
+    
+    // Agregar esta línea para cargar las lecturas iniciales
+    fetchReadings(currentPage);
 });
