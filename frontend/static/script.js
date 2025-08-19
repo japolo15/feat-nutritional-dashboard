@@ -3,7 +3,7 @@ import { getDatabase, ref, onValue, query, limitToLast } from "https://www.gstat
 
 // Tu configuración de Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyBEothAGr3ZcfeA45FTB_IA6IJmTXLC-LI",
+  apiKey: "YOUR API KEY HERE",
   authDomain: "feat-63kty.firebaseapp.com",
   databaseURL: "https://feat-63kty-default-rtdb.firebaseio.com",
   projectId: "feat-63kty",
